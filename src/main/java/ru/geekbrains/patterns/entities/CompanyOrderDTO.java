@@ -1,8 +1,13 @@
 package ru.geekbrains.patterns.entities;
 
+import ru.geekbrains.patterns.utils.state.OrderCompleteState;
+import ru.geekbrains.patterns.utils.state.State;
+import ru.geekbrains.patterns.utils.visitor.Element;
+import ru.geekbrains.patterns.utils.visitor.Visitor;
+
 import java.time.LocalDate;
 
-public class CompanyOrderDTO implements OrderDTO{
+public class CompanyOrderDTO implements OrderDTO, Element {
 
     private final Long id;
     private final String clientName;
@@ -11,6 +16,16 @@ public class CompanyOrderDTO implements OrderDTO{
     private final String phoneNumber;
     private final String comment;
     private final LocalDate createDate;
+
+    private State orderState = new OrderCompleteState(this);
+
+    public void setOrderState(State orderState){
+        this.orderState = orderState;
+    }
+
+    public void cancel(){
+        orderState.cancel();
+    }
 
     public CompanyOrderDTO(Long id, String clientName, Integer inn, String someImportantInfo, String phoneNumber, String comment, LocalDate createDate) {
         this.id = id;
@@ -47,6 +62,11 @@ public class CompanyOrderDTO implements OrderDTO{
 
     public static CompanyOrderDTOBuilder builder(){
         return new CompanyOrderDTOBuilder();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 
     public static class CompanyOrderDTOBuilder {

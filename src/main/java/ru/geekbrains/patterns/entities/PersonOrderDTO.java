@@ -1,14 +1,29 @@
 package ru.geekbrains.patterns.entities;
 
+import ru.geekbrains.patterns.utils.state.OrderCompleteState;
+import ru.geekbrains.patterns.utils.state.State;
+import ru.geekbrains.patterns.utils.visitor.Element;
+import ru.geekbrains.patterns.utils.visitor.Visitor;
+
 import java.time.LocalDate;
 
-public class PersonOrderDTO implements OrderDTO{
+public class PersonOrderDTO implements OrderDTO, Cloneable, Element {
 
     private final Long id;
     private final String clientName;
     private final String phoneNumber;
     private final String comment;
     private final LocalDate createDate;
+
+    private State orderState = new OrderCompleteState(this);
+
+    public void setOrderState(State orderState){
+        this.orderState = orderState;
+    }
+
+    public void cancel(){
+        orderState.cancel();
+    }
 
     public PersonOrderDTO(Long id, String clientName, String phoneNumber, String comment, LocalDate createDate) {
         this.id = id;
@@ -39,6 +54,16 @@ public class PersonOrderDTO implements OrderDTO{
 
     public static PersonOrderDTOBuilder builder(){
         return new PersonOrderDTOBuilder();
+    }
+
+    @Override
+    protected OrderDTO clone() throws CloneNotSupportedException {
+        return new PersonOrderDTO(id, clientName, phoneNumber, comment, createDate);
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 
     public static class PersonOrderDTOBuilder {
