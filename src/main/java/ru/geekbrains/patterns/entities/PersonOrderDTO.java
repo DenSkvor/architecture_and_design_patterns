@@ -7,7 +7,7 @@ import ru.geekbrains.patterns.utils.visitor.Visitor;
 
 import java.time.LocalDate;
 
-public class PersonOrderDTO implements OrderDTO, Cloneable, Element {
+public class PersonOrderDTO extends DomainObject implements OrderDTO, Cloneable, Element {
 
     private final Long id;
     private final String clientName;
@@ -64,6 +64,25 @@ public class PersonOrderDTO implements OrderDTO, Cloneable, Element {
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+    public String getClientName(){
+        return clientName;
+    }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public LocalDate getCreateDate() {
+        return createDate;
     }
 
     public static class PersonOrderDTOBuilder {
